@@ -1,11 +1,23 @@
 #!/usr/bin/env node
 
-// Stellar DevKit CLI entry point
-// Phase 0: Placeholder
-// Phase 1: Full implementation
+/**
+ * Stellar DevKit CLI
+ *
+ * Developer toolbox for Stellar and Soroban development
+ */
 
-console.log('Stellar DevKit CLI v0.0.1');
-console.log('Phase 0 - Foundation');
-console.log('\nRun `stellar-dev --help` for usage information.');
+import { Command } from 'commander';
+import { createXDRCommand } from '../src/commands';
 
-process.exit(0);
+const program = new Command();
+
+program
+  .name('stellar-dev')
+  .description('Developer toolbox for building, inspecting, and debugging Stellar/Soroban applications')
+  .version('0.1.0');
+
+// Add commands
+program.addCommand(createXDRCommand());
+
+// Parse arguments
+program.parse();

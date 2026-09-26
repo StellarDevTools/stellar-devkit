@@ -12,7 +12,9 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
@@ -23,7 +25,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@stellar-devkit/stellar": "workspace:*"
+    "@stellar-devkit/stellar": "workspace:*",
+    "@stellar/stellar-sdk": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
