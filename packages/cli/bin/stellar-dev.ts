@@ -15,6 +15,7 @@ import {
   createDoctorCommand,
   createContractCommand,
   createTransactionCommand,
+  createEventsCommand,
 } from '../src/commands';
 
 const program = new Command();
@@ -32,6 +33,7 @@ program.addCommand(createExplainCommand());
 program.addCommand(createDoctorCommand());
 program.addCommand(createContractCommand());
 program.addCommand(createTransactionCommand());
+program.addCommand(createEventsCommand());
 
 // Parse arguments
 program.parse();

@@ -20,3 +20,6 @@ export * from './contract';
 
 // Transaction Inspector
 export * from './transaction';
+
+// Contract Event Viewer
+export * from './events';
