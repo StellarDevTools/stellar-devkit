@@ -7,7 +7,7 @@
  */
 
 import { Command } from 'commander';
-import { createXDRCommand, createRPCCommand, createAccountCommand } from '../src/commands';
+import { createXDRCommand, createRPCCommand, createAccountCommand, createExplainCommand } from '../src/commands';
 
 const program = new Command();
 
@@ -20,6 +20,7 @@ program
 program.addCommand(createXDRCommand());
 program.addCommand(createRPCCommand());
 program.addCommand(createAccountCommand());
+program.addCommand(createExplainCommand());
 
 // Parse arguments
 program.parse();
