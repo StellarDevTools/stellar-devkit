@@ -18,16 +18,23 @@ export default function ToolsPage() {
     },
     {
       title: 'Account Inspector',
-      description: 'Inspect Stellar accounts',
+      description: 'Inspect Stellar account details including balances and signers',
       href: '/tools/account',
-      status: 'Coming Soon',
-      available: false,
+      status: 'Available',
+      available: true,
+    },
+    {
+      title: 'Error Explainer',
+      description: 'Explain Soroban errors with diagnostics and solutions',
+      href: '/tools/errors',
+      status: 'Available',
+      available: true,
     },
     {
       title: 'Project Doctor',
-      description: 'Diagnose your Stellar/Soroban project',
+      description: 'Diagnose your Stellar/Soroban project (CLI only)',
       href: '/tools/doctor',
-      status: 'Coming Soon',
+      status: 'CLI Only',
       available: false,
     },
     {

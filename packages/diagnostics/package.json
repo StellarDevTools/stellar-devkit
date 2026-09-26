@@ -10,12 +10,17 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./error-registry": {
+      "import": "./dist/error-registry.mjs",
+      "require": "./dist/error-registry.js",
+      "types": "./dist/error-registry.d.ts"
     }
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts src/error-registry.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts src/error-registry.ts --format cjs,esm --dts --watch",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
