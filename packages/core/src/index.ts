@@ -14,3 +14,6 @@ export * from './network';
 
 // Account Inspector
 export * from './account';
+
+// Contract Inspector
+export * from './contract';
