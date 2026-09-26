@@ -46,10 +46,10 @@ export default function ToolsPage() {
     },
     {
       title: 'Transaction Inspector',
-      description: 'Inspect transaction details',
+      description: 'Inspect transaction status, operations, and events',
       href: '/tools/transaction',
-      status: 'Phase 2',
-      available: false,
+      status: 'Available',
+      available: true,
     },
     {
       title: 'Event Viewer',

@@ -17,3 +17,6 @@ export * from './account';
 
 // Contract Inspector
 export * from './contract';
+
+// Transaction Inspector
+export * from './transaction';
