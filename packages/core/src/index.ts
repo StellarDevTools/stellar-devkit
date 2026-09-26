@@ -8,3 +8,6 @@ export const version = '0.1.0';
 
 // XDR Decoding
 export * from './xdr';
+
+// Network / RPC Health
+export * from './network';
