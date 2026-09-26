@@ -96,16 +96,12 @@ function checkCargo(findings: DiagnosticFinding[]): void {
 
 function checkStellarCLI(findings: DiagnosticFinding[]): void {
   try {
-    const output = execSync('stellar --version 2>&1 || soroban --version 2>&1', {
-      encoding: 'utf-8',
-      stdio: 'pipe',
-      shell: true,
-    });
+    const output = execSync('stellar --version', { encoding: 'utf-8' });
     findings.push({
       code: 'STELLAR_CLI_OK',
       severity: 'info',
       title: 'Stellar CLI Installed',
-      message: `Found: ${output.trim().split('\n')[0]}`,
+      message: `Found: ${output.trim()}`,
     });
   } catch {
     findings.push({
