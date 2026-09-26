@@ -13,6 +13,7 @@ import {
   createAccountCommand,
   createExplainCommand,
   createDoctorCommand,
+  createContractCommand,
 } from '../src/commands';
 
 const program = new Command();
@@ -28,6 +29,7 @@ program.addCommand(createRPCCommand());
 program.addCommand(createAccountCommand());
 program.addCommand(createExplainCommand());
 program.addCommand(createDoctorCommand());
+program.addCommand(createContractCommand());
 
 // Parse arguments
 program.parse();

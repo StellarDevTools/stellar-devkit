@@ -31,17 +31,17 @@ export default function ToolsPage() {
       available: true,
     },
     {
+      title: 'Contract Inspector',
+      description: 'Inspect deployed Soroban contracts',
+      href: '/tools/contract',
+      status: 'Available',
+      available: true,
+    },
+    {
       title: 'Project Doctor',
       description: 'Diagnose your Stellar/Soroban project (CLI only)',
       href: '/tools/doctor',
       status: 'CLI Only',
-      available: false,
-    },
-    {
-      title: 'Contract Inspector',
-      description: 'Inspect Soroban contracts',
-      href: '/tools/contract',
-      status: 'Phase 2',
       available: false,
     },
     {
