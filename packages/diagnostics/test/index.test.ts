@@ -3,7 +3,7 @@ import { version } from '../src/index';
 
 describe('@stellar-devkit/diagnostics', () => {
   it('should export version', () => {
-    expect(version).toBe('0.0.1');
+    expect(version).toBe('0.1.0');
   });
 
   it('should be a valid semver version', () => {
