@@ -99,3 +99,27 @@ export const ERROR_REGISTRY: ErrorDiagnostic[] = [
 export function findMatchingDiagnostics(errorMessage: string): ErrorDiagnostic[] {
   return ERROR_REGISTRY.filter(diag => diag.pattern.test(errorMessage));
 }
+
+export interface ErrorExplanation {
+  recognized: boolean;
+  message: string;
+  diagnostic?: ErrorDiagnostic;
+}
+
+export function explainError(errorMessage: string): ErrorExplanation {
+  const diagnostics = findMatchingDiagnostics(errorMessage);
+  const firstDiagnostic = diagnostics[0];
+
+  if (!firstDiagnostic) {
+    return {
+      recognized: false,
+      message: 'No diagnostic information found for this error. The error may be a new or uncommon error not yet in the registry, a custom error from your contract, or a malformed error message.',
+    };
+  }
+
+  return {
+    recognized: true,
+    message: firstDiagnostic.explanation,
+    diagnostic: firstDiagnostic,
+  };
+}
