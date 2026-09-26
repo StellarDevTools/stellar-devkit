@@ -11,3 +11,6 @@ export * from './xdr';
 
 // Network / RPC Health
 export * from './network';
+
+// Account Inspector
+export * from './account';
