@@ -175,7 +175,7 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
       break;
 
     case 'pathPaymentStrictReceive':
-    case 'pathPaymentStrictSend':
+    case 'pathPaymentStrictSend': {
       const pathOp = op as
         | StellarSdk.Operation.PathPaymentStrictReceive
         | StellarSdk.Operation.PathPaymentStrictSend;
@@ -191,8 +191,9 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
         details.details.destAmount = pathOp.destAmount;
       }
       break;
+    }
 
-    case 'changeTrust':
+    case 'changeTrust': {
       const trustOp = op as StellarSdk.Operation.ChangeTrust;
       details.details = {
         asset:
@@ -202,8 +203,9 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
         limit: trustOp.limit,
       };
       break;
+    }
 
-    case 'setOptions':
+    case 'setOptions': {
       const setOp = op as StellarSdk.Operation.SetOptions;
       details.details = {
         inflationDest: setOp.inflationDest,
@@ -217,22 +219,25 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
         signer: setOp.signer,
       };
       break;
+    }
 
-    case 'manageData':
+    case 'manageData': {
       const dataOp = op as StellarSdk.Operation.ManageData;
       details.details = {
         name: dataOp.name,
         value: dataOp.value?.toString('base64'),
       };
       break;
+    }
 
-    case 'invokeHostFunction':
+    case 'invokeHostFunction': {
       const invokeOp = op as StellarSdk.Operation.InvokeHostFunction;
       details.details = {
         function: invokeOp.func?.switch().name || 'unknown',
         auth: invokeOp.auth ? `${invokeOp.auth.length} auth entries` : 'none',
       };
       break;
+    }
 
     case 'bumpSequence':
       details.details = {
@@ -246,7 +251,7 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
       };
       break;
 
-    case 'manageSellOffer':
+    case 'manageSellOffer': {
       const sellOfferOp = op as StellarSdk.Operation.ManageSellOffer;
       details.details = {
         selling: formatAsset(sellOfferOp.selling),
@@ -256,8 +261,9 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
         offerId: sellOfferOp.offerId,
       };
       break;
+    }
 
-    case 'manageBuyOffer':
+    case 'manageBuyOffer': {
       const buyOfferOp = op as StellarSdk.Operation.ManageBuyOffer;
       details.details = {
         selling: formatAsset(buyOfferOp.selling),
@@ -267,8 +273,9 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
         offerId: buyOfferOp.offerId,
       };
       break;
+    }
 
-    case 'createPassiveSellOffer':
+    case 'createPassiveSellOffer': {
       const passiveOp = op as StellarSdk.Operation.CreatePassiveSellOffer;
       details.details = {
         selling: formatAsset(passiveOp.selling),
@@ -277,8 +284,9 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
         price: passiveOp.price,
       };
       break;
+    }
 
-    case 'allowTrust':
+    case 'allowTrust': {
       const allowOp = op as StellarSdk.Operation.AllowTrust;
       details.details = {
         trustor: allowOp.trustor,
@@ -286,8 +294,9 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
         authorize: allowOp.authorize,
       };
       break;
+    }
 
-    case 'clawback':
+    case 'clawback': {
       const clawbackOp = op as StellarSdk.Operation.Clawback;
       details.details = {
         asset: formatAsset(clawbackOp.asset),
@@ -295,6 +304,7 @@ function parseOperation(op: StellarSdk.Operation): OperationDetails {
         amount: clawbackOp.amount,
       };
       break;
+    }
 
     default:
       details.details = { ...op };
