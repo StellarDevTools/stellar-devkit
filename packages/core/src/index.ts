@@ -1,2 +1,10 @@
-// Placeholder - Phase 1 implementation
-export const version = '0.0.1';
+/**
+ * Stellar DevKit Core
+ *
+ * Core business logic for Stellar DevKit
+ */
+
+export const version = '0.1.0';
+
+// XDR Decoding
+export * from './xdr';
