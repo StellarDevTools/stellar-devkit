@@ -1,0 +1,46 @@
+{
+  "name": "@stellar-devkit/cli",
+  "version": "0.0.1",
+  "description": "CLI for Stellar DevKit",
+  "bin": {
+    "stellar-dev": "./bin/stellar-dev.js"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist", "bin"],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts && npm run build:bin",
+    "build:bin": "tsup bin/stellar-dev.ts --format cjs --no-splitting",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "lint": "eslint src/ bin/",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@stellar-devkit/core": "workspace:*",
+    "@stellar-devkit/diagnostics": "workspace:*",
+    "@stellar-devkit/stellar": "workspace:*",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "ora": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
