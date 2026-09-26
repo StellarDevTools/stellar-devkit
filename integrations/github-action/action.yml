@@ -1,0 +1,29 @@
+name: 'Stellar DevKit Doctor'
+description: 'Run Stellar/Soroban project diagnostics in CI'
+author: 'Stellar DevKit Contributors'
+
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  project-path:
+    description: 'Path to Stellar/Soroban project'
+    required: false
+    default: '.'
+  fail-on-error:
+    description: 'Fail the build if errors are found'
+    required: false
+    default: 'true'
+
+outputs:
+  success:
+    description: 'Whether diagnostics passed'
+  errors:
+    description: 'Number of errors found'
+  warnings:
+    description: 'Number of warnings found'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

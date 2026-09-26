@@ -1,0 +1,23 @@
+name: Example Workflow
+
+on: [push]
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Install Stellar CLI
+        run: cargo install --locked stellar-cli
+
+      - name: Run Diagnostics
+        uses: ./integrations/github-action
+        with:
+          project-path: '.'
+          fail-on-error: 'true'
