@@ -15,6 +15,17 @@ Model Context Protocol (MCP) server for Stellar DevKit. Exposes DevKit tools to 
 
 ## Installation
 
+**Note:** MCP server requires installing dependencies first:
+
+```bash
+cd integrations/mcp
+pnpm install
+pnpm build
+npm link
+```
+
+Or when published:
+
 ```bash
 npm install -g @stellar-devkit/mcp-server
 ```
