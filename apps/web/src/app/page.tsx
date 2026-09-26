@@ -34,7 +34,10 @@ export default function HomePage() {
 
         <div className="pt-12">
           <p className="text-sm text-muted-foreground">
-            Phase 0: Foundation - v0.0.1
+            Phase 2 Complete - v0.1.0
+          </p>
+          <p className="text-xs text-muted-foreground mt-2">
+            8 CLI tools • 6 web pages • MCP server • GitHub Action
           </p>
         </div>
       </div>

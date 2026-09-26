@@ -21,7 +21,7 @@ Stellar DevKit is a comprehensive, open-source developer platform for the Stella
 
 ## Features
 
-### Phase 1 (In Development)
+### Phase 1 ✅ Complete
 
 - **🏥 Project Doctor** - Comprehensive diagnostics for Stellar/Soroban projects
 - **🔍 Error Explainer** - Human-readable explanations for Soroban errors
@@ -29,14 +29,14 @@ Stellar DevKit is a comprehensive, open-source developer platform for the Stella
 - **👤 Account Inspector** - Inspect Stellar accounts and balances
 - **🌐 RPC Health Checker** - Monitor Stellar network and RPC health
 
-### Phase 2 (Planned)
+### Phase 2 ✅ Complete
 
 - **📜 Contract Inspector** - Inspect deployed Soroban contracts
-- **🔗 Transaction Inspector** - Detailed transaction analysis
-- **📊 Event Viewer** - Query and inspect contract events
-- **🎯 Transaction Simulation** - Simulate transactions before submission
-- **🤖 MCP Integration** - AI coding agent support
-- **🚀 GitHub Action** - CI/CD integration
+- **🔗 Transaction Inspector** - Detailed transaction analysis with error diagnostics
+- **📊 Event Viewer** - Query and inspect contract events (CLI)
+- **🤖 MCP Server** - AI assistant integration with 8 read-only tools
+- **🚀 GitHub Action** - CI/CD integration for project diagnostics
+- **⏳ Transaction Simulation** - Planned for Phase 2.1
 
 ### Phase 3 (Future)
 
@@ -97,6 +97,15 @@ stellar-dev rpc health --network testnet
 # Explain a Soroban error
 stellar-dev explain "HostError: Error(Storage, MissingValue)"
 
+# Inspect a contract (Phase 2)
+stellar-dev contract CCONTRACT...
+
+# Inspect a transaction (Phase 2)
+stellar-dev transaction TXHASH...
+
+# Query contract events (Phase 2)
+stellar-dev events --contract-id CCONTRACT...
+
 # Get help
 stellar-dev --help
 ```
@@ -126,7 +135,7 @@ stellar-devkit/
 │   ├── stellar/               # Stellar SDK abstractions
 │   ├── cli/                   # CLI implementation
 │   └── ui/                    # Shared UI components
-└── integrations/              # Future integrations (MCP, GitHub Action, VS Code)
+└── integrations/              # MCP Server, GitHub Action (VS Code future)
 ```
 
 **Key Principle:** Business logic lives in reusable packages, not in React components or CLI handlers.
@@ -220,7 +229,7 @@ Looking for a place to start? Check out issues labeled [`good first issue`](http
 
 See [ROADMAP.md](ROADMAP.md) for the complete project roadmap.
 
-**Current Status:** Phase 0 (Foundation) - In Progress
+**Current Status:** Phase 2 Complete - 8 CLI tools, 6 web pages, MCP server, GitHub Action
 
 ---
 
@@ -282,21 +291,20 @@ Special thanks to:
 
 ## Status
 
-**Phase 0: Foundation** - ✅ In Progress
+**Phase 0: Foundation** - ✅ Complete
 
-- [x] Monorepo structure
-- [x] Package configuration
-- [x] TypeScript setup
-- [x] Linting/formatting
-- [x] Web application scaffold
-- [x] CLI scaffold
-- [x] Documentation
-- [ ] CI/CD pipeline
-- [ ] Validation
+**Phase 1: Core Tools** - ✅ Complete
+- 5 diagnostic tools operational
+- CLI with 8 commands
+- Web application with 6 tool pages
+- 27/27 tests passing
 
-**Phase 1: Core Tools** - ⏳ Planned
+**Phase 2: Advanced Tools & Integrations** - ✅ Complete
+- Contract, Transaction, and Event inspection
+- MCP Server for AI assistants
+- GitHub Action for CI/CD
 
-See [ROADMAP.md](ROADMAP.md) for complete status and upcoming features.
+See [ROADMAP.md](ROADMAP.md), [PHASE_1_REPORT.md](PHASE_1_REPORT.md), and [PHASE_2_REPORT.md](PHASE_2_REPORT.md) for complete details.
 
 ---
 

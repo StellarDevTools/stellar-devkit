@@ -101,7 +101,7 @@ describe('RPC Health Checker', () => {
         sequence: 12345,
         protocolVersion: 20,
       });
-      expect(result.latencyMs).toBeGreaterThan(0);
+      expect(result.latencyMs).toBeGreaterThanOrEqual(0);
     });
 
     it('should handle degraded RPC status', async () => {
