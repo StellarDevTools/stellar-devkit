@@ -1,2 +1,5 @@
-// Placeholder - Phase 1 implementation
-export const version = '0.0.1';
+// Stellar DevKit Diagnostics
+export const version = '0.1.0';
+
+// Error Registry
+export * from './error-registry';
