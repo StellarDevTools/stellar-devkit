@@ -3,3 +3,4 @@
  */
 
 export * from './xdr';
+export * from './rpc';
