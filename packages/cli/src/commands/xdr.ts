@@ -4,7 +4,16 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { decodeXDR, isValidXDRFormat } from '@stellar-devkit/core';
+import { decodeXDR, isValidXDRFormat, type TransactionDetails } from '@stellar-devkit/core';
+
+function isTransactionDetails(details: unknown): details is TransactionDetails {
+  return (
+    typeof details === 'object' &&
+    details !== null &&
+    'sourceAccount' in details &&
+    'operations' in details
+  );
+}
 
 export function createXDRCommand(): Command {
   const xdr = new Command('xdr');
@@ -83,8 +92,8 @@ function displayDecodedXDR(data: NonNullable<ReturnType<typeof decodeXDR>['data'
   console.log(chalk.bold('Type:'), chalk.green(data.type));
   console.log();
 
-  if (data.details && 'sourceAccount' in data.details) {
-    const txDetails = data.details;
+  if (data.details && isTransactionDetails(data.details)) {
+    const txDetails: TransactionDetails = data.details;
 
     console.log(chalk.bold.underline('Transaction Details:\n'));
     console.log(chalk.bold('Source Account:'), txDetails.sourceAccount);
