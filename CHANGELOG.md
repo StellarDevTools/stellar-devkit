@@ -1,41 +1,17 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## Unreleased ? repository reliability work
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+- Added read-only Soroban invocation simulation in core, CLI and MCP.
+- Added shared RPC validation, safe error context and expanded error mappings.
+- Replaced Doctor substring checks with TOML parsing, contract layout diagnostics and optional bounded tool probes.
+- Fixed WASM hashing, parsed event values/cursors and transaction result-code handling.
+- Added behavioral tests for simulation, inspectors, Doctor, error mappings, MCP and Action.
+- Repaired MCP runtime validation, Action outputs/build setup and CLI executable packaging.
+- Corrected repository links, deployment instructions, API/contributor documentation and phase claims.
 
-## [Unreleased]
+This is unreleased work. Core/diagnostics source APIs identify as 0.1.0; their manifests now agree. CLI/stellar/ui/web remain 0.0.1, and integrations remain 0.1.0. Package versions need not imply synchronized publication. No npm package, GitHub release or Marketplace listing was created for this pass.
 
-### Phase 0 - Foundation
+## Historical foundation
 
-#### Added
-- Initial monorepo structure with pnpm workspaces
-- Turborepo build system
-- TypeScript configuration (strict mode)
-- ESLint and Prettier setup
-- Package structure:
-  - `@stellar-devkit/core` - Core business logic
-  - `@stellar-devkit/diagnostics` - Diagnostic engine
-  - `@stellar-devkit/stellar` - Stellar SDK abstractions
-  - `@stellar-devkit/cli` - CLI implementation
-  - `@stellar-devkit/ui` - Shared UI components
-- Next.js web application scaffold
-- CLI entry point scaffold
-- Documentation:
-  - README.md
-  - CONTRIBUTING.md
-  - SECURITY.md
-  - ROADMAP.md
-  - docs/ARCHITECTURE.md
-- CI/CD pipeline (GitHub Actions)
-- Testing infrastructure (Vitest)
-
-## [0.0.1] - 2026-09-26
-
-### Phase 0 - Foundation
-
-Initial project setup and architecture.
-
-[Unreleased]: https://github.com/stellar-devkit/stellar-devkit/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/stellar-devkit/stellar-devkit/releases/tag/v0.0.1
+Initial pnpm/Turbo monorepo, Next.js application, TypeScript tooling and initial inspection tools were added in earlier commits. The earlier changelog's v0.0.1 release link was unverified; commit history is the evidence for those changes.

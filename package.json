@@ -13,13 +13,13 @@
     "xdr",
     "devtools"
   ],
-  "homepage": "https://github.com/stellar-devkit/stellar-devkit#readme",
+  "homepage": "https://github.com/StellarDevTools/stellar-devkit#readme",
   "bugs": {
-    "url": "https://github.com/stellar-devkit/stellar-devkit/issues"
+    "url": "https://github.com/StellarDevTools/stellar-devkit/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stellar-devkit/stellar-devkit.git"
+    "url": "git+https://github.com/StellarDevTools/stellar-devkit.git"
   },
   "license": "Apache-2.0",
   "author": "Stellar DevKit Contributors",

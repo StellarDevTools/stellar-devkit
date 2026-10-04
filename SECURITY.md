@@ -1,50 +1,13 @@
-# Security Policy
+# Security policy
 
-## Supported Versions
+Report vulnerabilities privately through [GitHub private vulnerability reporting](https://github.com/StellarDevTools/stellar-devkit/security/advisories/new). Include a minimal reproduction, affected commit and impact; redact credentials. Do not open a public vulnerability issue. No response-time guarantee is advertised.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.x.x   | :white_check_mark: |
+This is a development project without a verified published release/support window. Fixes target the current main branch.
 
-## Reporting a Vulnerability
+Tools are read-only with respect to the blockchain. They never sign or submit transactions. Doctor reads local manifests and optionally runs fixed, time-bounded tool version probes; it does not execute project builds. MCP Doctor disables these probes.
 
-If you discover a security vulnerability in Stellar DevKit, please report it responsibly.
+Never pass secret seeds, recovery phrases, passwords or provider credentials in publicly shared output. Simulation envelopes and event values can contain application data. Error context redacts recognizable Stellar secret seeds, URLs and common credential assignments; this is not a comprehensive data-loss prevention system.
 
-**Please DO NOT open a public GitHub issue.**
+Known limits: no global rate limiter, endpoint reachability is not a trust guarantee, local HTTP is allowed, provider retention varies, and there has been no independent security audit. The stdio MCP server assumes a trusted local user and is not a multi-tenant filesystem sandbox. Do not expose it as an unauthenticated network service.
 
-Instead, please email security reports to: [security@stellar-devkit.dev](mailto:security@stellar-devkit.dev)
-
-Include in your report:
-- Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if available)
-
-We will respond within 48 hours and work with you to understand and address the issue.
-
-## Security Best Practices
-
-Stellar DevKit follows these security principles:
-
-- **No private key handling** - We never request, store, or log private keys or seed phrases
-- **Input validation** - All user inputs are validated and sanitized
-- **Dependency scanning** - Regular security audits of dependencies
-- **Read-only operations** - Phase 1 tools are read-only by design
-- **Rate limiting** - RPC requests are rate-limited to prevent abuse
-
-## Known Limitations
-
-- Phase 1 is read-only and does not support transaction signing
-- RPC endpoints may have their own rate limits
-- Historical data is limited by Stellar RPC retention (~7 days)
-
-## Security Updates
-
-Security updates will be released as patch versions and announced via:
-- GitHub Security Advisories
-- Release notes
-- Project README
-
-## Acknowledgments
-
-We appreciate security researchers who responsibly disclose vulnerabilities.
+Dependency advisories and release artifacts must be reviewed before publishing; passing unit tests is not a security certification.
