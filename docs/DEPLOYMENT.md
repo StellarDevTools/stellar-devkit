@@ -1,6 +1,6 @@
 # Web deployment
 
-The repository homepage is https://stellar-devkit-eta.vercel.app (HTTP 200 verified during the 2026-10-03 audit). Vercel reported successful deployments for starting commit 4e83e9b. The final readiness report records validation of this change separately.
+The repository homepage is https://stellar-devkit-eta.vercel.app (HTTP 200 verified during the 2026-10-03 audit). Vercel reported successful deployments for starting commit 4e83e9b and engineering commit 2b4fb2f; both connected Vercel projects succeeded. The final readiness report records validation of this change separately.
 
 For Vercel, import StellarDevTools/stellar-devkit and set:
 

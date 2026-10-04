@@ -34,21 +34,21 @@ Validation uses real package scripts and deterministic local fixtures. No measur
 | pnpm install / frozen install | Passed |
 | pnpm lint | Passed, warnings retained |
 | pnpm typecheck | Passed, all eight packages |
-| pnpm test | 122 tests passed across 14 files; a final numeric RPC-code regression then passed in the 34-test Stellar package suite |
+| pnpm test | 123 tests passed across 14 files on GitHub CI; local full run passed 122 before the final regression was added and passed in the 34-test Stellar package suite |
 | pnpm build | Passed, all eight workspace packages; web generated 11 static pages |
 | Built CLI | Help and manifest-only Doctor JSON smoke checks passed |
 | Bundled Action | Manifest-only diagnostic execution exited 0 |
 | Markdown links / diff | No missing local Markdown targets; source diff whitespace check passed |
 
-The baseline had 33 tests. The final source contains 123 tests (90 added): stellar 34, core 49, diagnostics 14, CLI 4, MCP 18, Action 4. CI verifies the combined final tree.
+The baseline had 33 tests. The final source contains 123 tests (90 added): stellar 34, core 49, diagnostics 14, CLI 4, MCP 18, Action 4. CI run 37165583027 verifies the combined engineering tree.
 
 Local checks use Windows with Node 24.18.0 and pnpm 8.15.0; CI uses Linux/Node 22. Existing warnings include CLI console output, legacy any types, Next lint deprecation and Stellar SDK native-module bundling. They are not hidden or promoted into an unsupported warning-free claim.
 
 ## CI and deployment
 
-Local validation is complete. Remote CI and deployment evidence will be recorded after pushing the engineering commits; do not infer a green remote run from local results.
+Engineering commit `2b4fb2ff482aed1fd3284d2a1d2a94d4d6248bed` passed all four jobs in [CI run 37165583027](https://github.com/StellarDevTools/stellar-devkit/actions/runs/37165583027): lint, typecheck, tests and build. The build job also exercised the CLI executable and bundled Doctor Action. Both Vercel commit statuses report successful deployments for this SHA: deployment IDs 6835016877 (stellar-devkit) and 6835018896 (stellar-devkit-dif2). This report's final documentation-only commit records that verified engineering revision.
 
-The existing homepage https://stellar-devkit-eta.vercel.app and /tools plus all six tool routes returned HTTP 200 with the Stellar DevKit title. This is route availability evidence, not a browser E2E or live-network functional test. Vercel reported successful deployments for the starting commit. `apps/web/vercel.json` and docs/DEPLOYMENT.md document monorepo build settings. No new domain or npm/Marketplace release was created.
+The existing homepage https://stellar-devkit-eta.vercel.app and /tools plus all six tool routes returned HTTP 200 with the Stellar DevKit title. This is route availability evidence, not a browser E2E or live-network functional test. Vercel reported successful deployments for both the starting commit and the verified engineering revision above. `apps/web/vercel.json` and docs/DEPLOYMENT.md document monorepo build settings. No new domain or npm/Marketplace release was created.
 
 ## Public contributor backlog
 
