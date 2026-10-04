@@ -1,311 +1,81 @@
 # Stellar DevKit
 
-**Developer toolbox for building, inspecting, testing, debugging, and understanding Stellar and Soroban applications.**
+Read-only inspection and diagnostics for Stellar and Soroban developers.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![CI](https://github.com/stellar-devkit/stellar-devkit/workflows/CI/badge.svg)](https://github.com/stellar-devkit/stellar-devkit/actions)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-8.15-orange)](https://pnpm.io/)
+[![CI](https://github.com/StellarDevTools/stellar-devkit/actions/workflows/ci.yml/badge.svg)](https://github.com/StellarDevTools/stellar-devkit/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
----
+[Web application](https://stellar-devkit-eta.vercel.app) ? [Contributor issues](https://github.com/StellarDevTools/stellar-devkit/issues) ? [CLI reference](docs/CLI.md)
 
-## Overview
+## What works
 
-Stellar DevKit is a comprehensive, open-source developer platform for the Stellar ecosystem. It combines diagnostic tools, inspection utilities, and debugging capabilities into a unified experience for Stellar and Soroban developers.
+| Tool                  | Capability                                                                                               | Interface                     |
+| --------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Project Doctor        | Parse Cargo manifests, check contract crate/source layout and local tooling                              | CLI, MCP (files only), Action |
+| Error Explainer       | Pattern-based host, storage, budget, authorization, transaction and RPC explanations                     | CLI, web, MCP                 |
+| XDR Decoder           | Transaction envelope and transaction decoding; operation summaries                                       | CLI, web, MCP                 |
+| Account Inspector     | Horizon balances, signers, thresholds and flags                                                          | CLI, web, MCP                 |
+| RPC Health            | Health, latest ledger and bounded request time                                                           | CLI, web, MCP                 |
+| Contract Inspector    | Validated ID, WASM SHA-256/size, instance modification and TTL ledgers                                   | CLI, web, MCP                 |
+| Transaction Inspector | Status, sequence, operation/result codes, v3 events and raw metadata                                     | CLI, web, MCP                 |
+| Event Viewer          | Contract/type filters, ledger/cursor pagination and decoded ScVals                                       | CLI, MCP                      |
+| Simulation            | Read-only invokeHostFunction simulation, fees/resources, auth, return value, events and restore preamble | CLI, MCP                      |
 
-**Not another:** wallet, block explorer, payment app, or Stellar CLI replacement.
+Simulation never signs or submits transactions. An unsigned envelope still needs a valid source account and invocation. Results are estimates at the returned ledger, not a guarantee of later execution.
 
-**Instead:** A powerful diagnostic and inspection platform that improves the Stellar developer experience.
+## Run from source
 
----
-
-## Features
-
-### Phase 1 ✅ Complete
-
-- **🏥 Project Doctor** - Comprehensive diagnostics for Stellar/Soroban projects
-- **🔍 Error Explainer** - Human-readable explanations for Soroban errors
-- **📦 XDR Decoder** - Decode and understand Stellar XDR
-- **👤 Account Inspector** - Inspect Stellar accounts and balances
-- **🌐 RPC Health Checker** - Monitor Stellar network and RPC health
-
-### Phase 2 ✅ Complete
-
-- **📜 Contract Inspector** - Inspect deployed Soroban contracts
-- **🔗 Transaction Inspector** - Detailed transaction analysis with error diagnostics
-- **📊 Event Viewer** - Query and inspect contract events (CLI)
-- **🤖 MCP Server** - AI assistant integration with 8 read-only tools
-- **🚀 GitHub Action** - CI/CD integration for project diagnostics
-- **⏳ Transaction Simulation** - Planned for Phase 2.1
-
-### Phase 3 (Future)
-
-- **💻 VS Code Extension** - IDE integration
-- **🔒 Security Analysis** - Contract security scanning
-- **⚡ Performance Analysis** - Gas optimization recommendations
-- **🔌 Plugin Architecture** - Community extensions
-
----
-
-## Installation
-
-### CLI
+Use Node.js 22 and the pinned pnpm 8.15.0. npm publication has not been verified; source installation is the supported path for this development snapshot.
 
 ```bash
-# Using pnpm
-pnpm add -g @stellar-devkit/cli
-
-# Using npm
-npm install -g @stellar-devkit/cli
-
-# Using yarn
-yarn global add @stellar-devkit/cli
-```
-
-### Web Application
-
-Visit [stellar-devkit.dev](https://stellar-devkit.dev) (coming soon)
-
-Or run locally:
-
-```bash
-git clone https://github.com/stellar-devkit/stellar-devkit.git
+git clone https://github.com/StellarDevTools/stellar-devkit.git
 cd stellar-devkit
-pnpm install
-pnpm dev
-```
-
----
-
-## Quick Start
-
-### CLI Usage
-
-```bash
-# Check your Stellar/Soroban project
-stellar-dev doctor .
-
-# Inspect a Stellar account
-stellar-dev account GACCOUNT...
-
-# Decode XDR
-stellar-dev xdr decode AAAAAgAAAAD...
-
-# Check RPC health
-stellar-dev rpc health --network testnet
-
-# Explain a Soroban error
-stellar-dev explain "HostError: Error(Storage, MissingValue)"
-
-# Inspect a contract (Phase 2)
-stellar-dev contract CCONTRACT...
-
-# Inspect a transaction (Phase 2)
-stellar-dev transaction TXHASH...
-
-# Query contract events (Phase 2)
-stellar-dev events --contract-id CCONTRACT...
-
-# Get help
-stellar-dev --help
-```
-
-### JSON Output
-
-All commands support JSON output for scripting and automation:
-
-```bash
-stellar-dev doctor . --json
-stellar-dev account GACCOUNT... --json --network testnet
-```
-
----
-
-## Architecture
-
-Stellar DevKit is built as a **monorepo** with reusable packages:
-
-```
-stellar-devkit/
-├── apps/
-│   └── web/                    # Next.js web application
-├── packages/
-│   ├── core/                  # Core business logic
-│   ├── diagnostics/           # Diagnostic engine & rules
-│   ├── stellar/               # Stellar SDK abstractions
-│   ├── cli/                   # CLI implementation
-│   └── ui/                    # Shared UI components
-└── integrations/              # MCP Server, GitHub Action (VS Code future)
-```
-
-**Key Principle:** Business logic lives in reusable packages, not in React components or CLI handlers.
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
-
----
-
-## Development
-
-### Prerequisites
-
-- Node.js 18+ ([install](https://nodejs.org/))
-- pnpm 8+ ([install](https://pnpm.io/installation))
-- Git
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/stellar-devkit/stellar-devkit.git
-cd stellar-devkit
-
-# Install dependencies
-pnpm install
-
-# Build all packages
+corepack enable
+corepack prepare pnpm@8.15.0 --activate
+pnpm install --frozen-lockfile
 pnpm build
-
-# Run tests
-pnpm test
-
-# Start web app in development mode
-pnpm dev
-```
-
-### Useful Commands
-
-```bash
-pnpm build          # Build all packages
-pnpm dev            # Start development server
-pnpm test           # Run tests
-pnpm lint           # Lint code
-pnpm typecheck      # Type check
-pnpm format         # Format code
-pnpm clean          # Clean build artifacts
-```
-
-### Running Individual Packages
-
-```bash
-# Build only the core package
-pnpm --filter @stellar-devkit/core build
-
-# Test only the diagnostics package
-pnpm --filter @stellar-devkit/diagnostics test
-
-# Run web app
+node packages/cli/dist/stellar-dev.mjs --help
 pnpm --filter @stellar-devkit/web dev
 ```
 
----
+On Windows PowerShell with script execution disabled, use `pnpm.cmd`. The web app runs at http://localhost:3000.
 
-## Supported Networks
+```bash
+node packages/cli/dist/stellar-dev.mjs doctor ./contracts/hello --no-check-tools --json
+node packages/cli/dist/stellar-dev.mjs rpc health --network testnet
+node packages/cli/dist/stellar-dev.mjs explain "Error(Auth, InvalidAction)"
+node packages/cli/dist/stellar-dev.mjs simulate "$TRANSACTION_XDR" --network testnet --json
+node packages/cli/dist/stellar-dev.mjs events --start-ledger 12345 --contract-id "$CONTRACT_ID" --json
+```
 
-- **Testnet** (default) - `https://soroban-testnet.stellar.org`
-- **Futurenet** - `https://rpc-futurenet.stellar.org`
-- **Mainnet** - Custom RPC endpoint required (no public SDF endpoint)
+Replace variables with public identifiers/XDR. Never provide a secret key or seed phrase. XDR and RPC responses can contain application data; inspect them before sharing.
 
-Configure custom RPC endpoints via CLI flags or web UI.
+## Architecture and validation
 
----
+This is one pnpm/Turborepo monorepo. `packages/stellar` provides network/XDR/error helpers; `core` implements remote inspection and simulation; `diagnostics` implements local Doctor and re-exports the error registry. CLI, web, MCP and Action consume these packages. `ui` remains a placeholder.
 
-## Contributing
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+Tests use mocks and local fixtures; normal CI does not require live Stellar networks or private keys. See the [readiness report](OPEN_SOURCE_READINESS_REPORT.md) for measured results rather than inferred coverage percentages.
 
-- How to contribute
-- Development setup
-- Code style guidelines
-- Pull request process
-- Issue templates
+## Limits and remaining work
 
-### Good First Issues
+- Event Viewer and simulation web interfaces are not implemented.
+- Contract function specifications and arbitrary storage inspection are not implemented. The modification ledger is not a deployment ledger.
+- Transaction metadata beyond v3 is preserved as XDR with a warning; fee-bump inner result analysis needs further work.
+- Doctor does not compile contracts, execute project tests, resolve all workspace dependency inheritance, or audit contract security.
+- Error matching is advisory; custom contract error numbers require the contract's own definitions.
+- RPC history depends on the provider's retention window. Mainnet RPC tools require `--rpc-url` (health uses `--endpoint`). Account Inspector uses Horizon.
+- Dependency audit findings remain open; see [upgrade/triage issue #14](https://github.com/StellarDevTools/stellar-devkit/issues/14).
+- There is no built-in rate limiter, broad browser E2E suite, or verified npm/Marketplace release.
 
-Looking for a place to start? Check out issues labeled [`good first issue`](https://github.com/stellar-devkit/stellar-devkit/labels/good%20first%20issue).
+## Contribute
 
----
+See [CONTRIBUTING.md](CONTRIBUTING.md), [the real backlog](docs/CONTRIBUTOR_BACKLOG.md), [architecture](docs/ARCHITECTURE.md), [API](docs/API.md), [diagnostic guide](docs/DIAGNOSTICS.md), [error registry guide](docs/ERROR_REGISTRY.md), [roadmap](ROADMAP.md), and [deployment guide](docs/DEPLOYMENT.md).
 
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md) for the complete project roadmap.
-
-**Current Status:** Phase 2 Complete - 8 CLI tools, 6 web pages, MCP server, GitHub Action
-
----
-
-## Security
-
-We take security seriously. See [SECURITY.md](SECURITY.md) for our security policy and how to report vulnerabilities.
-
-**Important:** Stellar DevKit never requests, stores, or logs private keys or seed phrases.
-
----
-
-## Documentation
-
-- [Architecture](docs/ARCHITECTURE.md) - System architecture and design principles
-- [Roadmap](ROADMAP.md) - Development roadmap and phases
-- [Contributing](CONTRIBUTING.md) - Contribution guidelines
-- [Security](SECURITY.md) - Security policy
-- [API Reference](docs/API.md) - Package API documentation (Phase 1)
-- [CLI Reference](docs/CLI.md) - CLI usage guide (Phase 1)
-
----
-
-## Tech Stack
-
-- **Languages:** TypeScript, Rust (minimal)
-- **Frontend:** Next.js 15, React 19, Tailwind CSS
-- **Build:** Turborepo, pnpm workspaces
-- **Testing:** Vitest
-- **Stellar:** `@stellar/stellar-sdk` v13+
-- **Linting:** ESLint, Prettier
-
----
-
-## License
-
-Apache License 2.0 - see [LICENSE](LICENSE) for details.
-
----
-
-## Acknowledgements
-
-Built with ❤️ for the Stellar developer community.
-
-Special thanks to:
-- Stellar Development Foundation for the official SDKs
-- All contributors and community members
-
----
-
-## Links
-
-- **Website:** [stellar-devkit.dev](https://stellar-devkit.dev) (coming soon)
-- **GitHub:** [github.com/stellar-devkit/stellar-devkit](https://github.com/stellar-devkit/stellar-devkit)
-- **Issues:** [github.com/stellar-devkit/stellar-devkit/issues](https://github.com/stellar-devkit/stellar-devkit/issues)
-- **Discussions:** [github.com/stellar-devkit/stellar-devkit/discussions](https://github.com/stellar-devkit/stellar-devkit/discussions)
-- **Stellar Docs:** [developers.stellar.org](https://developers.stellar.org)
-
----
-
-## Status
-
-**Phase 0: Foundation** - ✅ Complete
-
-**Phase 1: Core Tools** - ✅ Complete
-- 5 diagnostic tools operational
-- CLI with 8 commands
-- Web application with 6 tool pages
-- 27/27 tests passing
-
-**Phase 2: Advanced Tools & Integrations** - ✅ Complete
-- Contract, Transaction, and Event inspection
-- MCP Server for AI assistants
-- GitHub Action for CI/CD
-
-See [ROADMAP.md](ROADMAP.md), [PHASE_1_REPORT.md](PHASE_1_REPORT.md), and [PHASE_2_REPORT.md](PHASE_2_REPORT.md) for complete details.
-
----
-
-**Built for developers, by developers.**
+Report vulnerabilities privately using [SECURITY.md](SECURITY.md). Contributions remain under [Apache 2.0](LICENSE). Follow the [Code of Conduct](CODE_OF_CONDUCT.md).

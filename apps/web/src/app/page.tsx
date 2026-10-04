@@ -3,9 +3,7 @@ export default function HomePage() {
     <main className="min-h-screen flex items-center justify-center p-8">
       <div className="max-w-4xl w-full text-center space-y-8">
         <div className="space-y-4">
-          <h1 className="text-6xl font-bold tracking-tight">
-            Stellar DevKit
-          </h1>
+          <h1 className="text-6xl font-bold tracking-tight">Stellar DevKit</h1>
           <p className="text-2xl text-muted-foreground">
             Build. Inspect. Debug. Ship.
           </p>
@@ -23,7 +21,7 @@ export default function HomePage() {
             Open DevKit
           </a>
           <a
-            href="https://github.com/stellar-devkit/stellar-devkit"
+            href="https://github.com/StellarDevTools/stellar-devkit"
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 border border-border rounded-lg font-medium hover:bg-secondary transition-colors"

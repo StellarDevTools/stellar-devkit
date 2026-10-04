@@ -1,3 +1,5 @@
+> Historical planning document. This is not a current implementation/status report. See [the audit](REPOSITORY_AUDIT.md) and [readiness report](../OPEN_SOURCE_READINESS_REPORT.md).
+
 # Phase 0: Foundation - Implementation Plan
 
 ## Overview

@@ -55,7 +55,7 @@ export default function ToolsPage() {
       title: 'Event Viewer',
       description: 'Inspect contract events',
       href: '/tools/events',
-      status: 'Phase 2',
+      status: 'CLI / MCP',
       available: false,
     },
   ];
@@ -113,7 +113,7 @@ export default function ToolsPage() {
 
         <div className="pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center">
-            Phase 1 - More tools coming soon!
+            Read-only Stellar and Soroban developer tools
           </p>
         </div>
       </div>
