@@ -16,14 +16,17 @@ import {
   createContractCommand,
   createTransactionCommand,
   createEventsCommand,
+  createSimulateCommand,
 } from '../src/commands';
 
 const program = new Command();
 
 program
   .name('stellar-dev')
-  .description('Developer toolbox for building, inspecting, and debugging Stellar/Soroban applications')
-  .version('0.1.0');
+  .description(
+    'Developer toolbox for building, inspecting, and debugging Stellar/Soroban applications'
+  )
+  .version('0.0.1');
 
 // Add commands
 program.addCommand(createXDRCommand());
@@ -34,6 +37,7 @@ program.addCommand(createDoctorCommand());
 program.addCommand(createContractCommand());
 program.addCommand(createTransactionCommand());
 program.addCommand(createEventsCommand());
+program.addCommand(createSimulateCommand());
 
 // Parse arguments
 program.parse();
