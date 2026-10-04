@@ -12,6 +12,8 @@ export interface EventViewerOptions {
   startLedger?: number;
   contractIds?: string[];
   limit?: number;
+  cursor?: string;
+  eventType?: 'contract' | 'system' | 'diagnostic';
 }
 
 export interface ContractEvent {
@@ -22,6 +24,8 @@ export interface ContractEvent {
   pagingToken: string;
   topics: string[];
   value: string;
+  decodedTopics?: unknown[];
+  decodedValue?: unknown;
 }
 
 export interface EventViewerResult {

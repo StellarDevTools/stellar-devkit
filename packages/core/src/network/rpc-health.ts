@@ -5,6 +5,7 @@
  */
 
 import * as StellarSdk from '@stellar/stellar-sdk';
+import { validateEndpoint, safeErrorContext } from '@stellar-devkit/stellar';
 import type {
   RPCHealthResult,
   HealthCheckOptions,
@@ -39,7 +40,8 @@ export async function checkRPCHealth(
       endpoint: 'N/A',
       network: 'mainnet',
       status: 'unreachable',
-      error: 'Mainnet requires a custom RPC endpoint. Use --endpoint <url> or set customEndpoint option.',
+      error:
+        'Mainnet requires a custom RPC endpoint. Use --endpoint <url> or set customEndpoint option.',
       timestamp: startTime,
     };
   } else if (network in DEFAULT_ENDPOINTS) {
@@ -55,9 +57,13 @@ export async function checkRPCHealth(
     };
   }
 
-  const timeout = options.timeout || DEFAULT_TIMEOUT;
+  const timeout = options.timeout ?? DEFAULT_TIMEOUT;
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
   try {
+    validateEndpoint(endpoint);
+    if (!Number.isFinite(timeout) || timeout <= 0)
+      throw new Error('Timeout must be positive.');
     // Create RPC server instance
     const server = new StellarSdk.rpc.Server(endpoint, {
       allowHttp: endpoint.startsWith('http://'),
@@ -66,7 +72,7 @@ export async function checkRPCHealth(
     // Perform health check with timeout
     const healthCheckPromise = performHealthCheck(server);
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Request timeout')), timeout);
+      timer = setTimeout(() => reject(new Error('Request timeout')), timeout);
     });
 
     const result = await Promise.race([healthCheckPromise, timeoutPromise]);
@@ -91,18 +97,20 @@ export async function checkRPCHealth(
       network,
       status: 'unreachable',
       latencyMs,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: safeErrorContext(
+        error instanceof Error ? error.message : 'Unknown error'
+      ),
       timestamp: startTime,
     };
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 }
 
 /**
  * Perform actual health check against RPC server
  */
-async function performHealthCheck(
-  server: StellarSdk.rpc.Server
-): Promise<{
+async function performHealthCheck(server: StellarSdk.rpc.Server): Promise<{
   status: HealthStatus;
   ledgerInfo?: {
     sequence: number | string;
