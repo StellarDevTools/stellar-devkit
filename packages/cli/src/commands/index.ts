@@ -10,3 +10,4 @@ export * from './doctor';
 export * from './contract';
 export * from './transaction';
 export * from './events';
+export * from './simulate';

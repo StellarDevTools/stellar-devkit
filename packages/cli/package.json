@@ -3,16 +3,16 @@
   "version": "0.0.1",
   "description": "CLI for Stellar DevKit",
   "bin": {
-    "stellar-dev": "./bin/stellar-dev.js"
+    "stellar-dev": "./dist/stellar-dev.mjs"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "files": [
@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts && npm run build:bin",
-    "build:bin": "tsup bin/stellar-dev.ts --format cjs --no-splitting",
+    "build:bin": "tsup bin/stellar-dev.ts --format esm --no-splitting",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "lint": "eslint src/ bin/",
     "typecheck": "tsc --noEmit",

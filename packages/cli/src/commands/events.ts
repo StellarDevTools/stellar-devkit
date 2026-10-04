@@ -11,36 +11,55 @@ export function createEventsCommand(): Command {
 
   events
     .description('Query Soroban contract events')
-    .option('--network <network>', 'Network (testnet, mainnet, futurenet)', 'testnet')
+    .option(
+      '--network <network>',
+      'Network (testnet, mainnet, futurenet)',
+      'testnet'
+    )
     .option('--rpc-url <url>', 'Custom RPC URL')
     .option('--start-ledger <ledger>', 'Start ledger', parseInt)
-    .option('--contract-id <id>', 'Filter by contract ID (repeatable)', collect, [])
+    .option(
+      '--contract-id <id>',
+      'Filter by contract ID (repeatable)',
+      collect,
+      []
+    )
     .option('--limit <number>', 'Max events to return', parseInt, 10)
+    .option('--cursor <cursor>', 'Continue from a previous response cursor')
+    .option('--type <type>', 'contract, system or diagnostic', 'contract')
     .option('--json', 'Output as JSON')
-    .action(async (options: {
-      network: string;
-      rpcUrl?: string;
-      startLedger?: number;
-      contractId: string[];
-      limit: number;
-      json?: boolean;
-    }) => {
-      const result = await queryEvents({
-        network: options.network as NetworkType,
-        customRpcUrl: options.rpcUrl,
-        startLedger: options.startLedger,
-        contractIds: options.contractId.length > 0 ? options.contractId : undefined,
-        limit: options.limit,
-      });
+    .action(
+      async (options: {
+        network: string;
+        rpcUrl?: string;
+        startLedger?: number;
+        contractId: string[];
+        limit: number;
+        json?: boolean;
+        cursor?: string;
+        type: 'contract' | 'system' | 'diagnostic';
+      }) => {
+        const result = await queryEvents({
+          network: options.network as NetworkType,
+          customRpcUrl: options.rpcUrl,
+          startLedger: options.startLedger,
+          contractIds:
+            options.contractId.length > 0 ? options.contractId : undefined,
+          limit: options.limit,
+          cursor: options.cursor,
+          eventType: options.type,
+        });
 
-      if (options.json) {
-        console.log(JSON.stringify(result, null, 2));
+        if (options.json) {
+          console.log(JSON.stringify(result, null, 2));
+          process.exit(result.success ? 0 : 1);
+        }
+
+        displayEvents(result);
+        if (result.cursor) console.log('Next cursor:', result.cursor);
         process.exit(result.success ? 0 : 1);
       }
-
-      displayEvents(result);
-      process.exit(result.success ? 0 : 1);
-    });
+    );
 
   return events;
 }
