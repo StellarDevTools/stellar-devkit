@@ -1,10 +1,7 @@
-/**
- * Project Doctor - Stellar/Soroban Project Diagnostics
- */
-
-import { execSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { join, resolve, relative, isAbsolute } from 'node:path';
+import { parse } from '@iarna/toml';
 
 export interface DiagnosticFinding {
   code: string;
@@ -25,152 +22,173 @@ export interface DoctorResult {
   };
 }
 
-export async function diagnoseProject(projectPath: string): Promise<DoctorResult> {
+export interface DoctorOptions {
+  checkTools?: boolean;
+}
+
+export async function diagnoseProject(
+  projectPath: string,
+  options: DoctorOptions = {}
+): Promise<DoctorResult> {
   const findings: DiagnosticFinding[] = [];
-
-  // Check Rust
-  checkRust(findings);
-
-  // Check Cargo
-  checkCargo(findings);
-
-  // Check Stellar CLI
-  checkStellarCLI(findings);
-
-  // Check project structure
-  checkProjectStructure(projectPath, findings);
-
-  const summary = {
-    errors: findings.filter(f => f.severity === 'error').length,
-    warnings: findings.filter(f => f.severity === 'warning').length,
-    info: findings.filter(f => f.severity === 'info').length,
+  const project = resolve(projectPath);
+  const add = (
+    code: string,
+    severity: DiagnosticFinding['severity'],
+    title: string,
+    message: string,
+    suggestion: string
+  ) => {
+    findings.push({ code, severity, title, message, suggestion });
   };
-
+  if (options.checkTools !== false) {
+    for (const [command, code, severity] of [
+      ['rustc', 'RUST', 'error'],
+      ['cargo', 'CARGO', 'error'],
+      ['stellar', 'STELLAR_CLI', 'warning'],
+    ] as const) {
+      try {
+        // Fixed executable/arguments, bounded execution; never run project scripts.
+        execFileSync(command, ['--version'], {
+          timeout: 5000,
+          stdio: 'pipe',
+          maxBuffer: 65536,
+        });
+        add(
+          `${code}_OK`,
+          'info',
+          `${command} available`,
+          'Executable responds to --version.',
+          'Keep the toolchain compatible with your contract SDK.'
+        );
+      } catch {
+        add(
+          `${code}_MISSING`,
+          severity,
+          `${command} unavailable`,
+          'Executable is missing, failed or timed out.',
+          'Install the tool using the official Stellar/Rust documentation.'
+        );
+      }
+    }
+  }
+  if (!existsSync(project) || !statSync(project).isDirectory()) {
+    add(
+      'INVALID_PROJECT_PATH',
+      'error',
+      'Invalid project directory',
+      'The requested directory does not exist.',
+      'Pass a local contract directory.'
+    );
+  } else if (!existsSync(join(project, 'Cargo.toml'))) {
+    add(
+      'NO_CARGO_TOML',
+      'error',
+      'Cargo.toml missing',
+      'No Cargo manifest was found.',
+      'Select the Soroban contract crate directory.'
+    );
+  } else {
+    try {
+      const manifestPath = join(project, 'Cargo.toml');
+      if (statSync(manifestPath).size > 1024 * 1024)
+        throw new Error('oversized manifest');
+      const manifest = parse(readFileSync(manifestPath, 'utf8'));
+      add(
+        'CARGO_TOML_OK',
+        'info',
+        'Valid Cargo manifest',
+        'Cargo.toml parses as TOML.',
+        'Review the contract configuration findings below.'
+      );
+      if (manifest.workspace && !manifest.package) {
+        add(
+          'WORKSPACE_ROOT',
+          'info',
+          'Cargo workspace root',
+          'This is a virtual workspace, not a contract crate.',
+          'Run Doctor against each contract member. Recursive workspace discovery is not implemented.'
+        );
+      } else {
+        const dependencies = manifest.dependencies as
+          Record<string, unknown> | undefined;
+        const sdk = dependencies?.['soroban-sdk'];
+        add(
+          sdk ? 'SOROBAN_PROJECT' : 'NOT_SOROBAN',
+          sdk ? 'info' : 'warning',
+          sdk ? 'Soroban dependency found' : 'Soroban dependency missing',
+          sdk
+            ? 'soroban-sdk is declared in dependencies.'
+            : 'No direct soroban-sdk dependency is declared.',
+          'Use a soroban-sdk dependency compatible with your target protocol; workspace-inherited versions are not resolved here.'
+        );
+        const lib = manifest.lib as Record<string, unknown> | undefined;
+        if (
+          sdk &&
+          (!Array.isArray(lib?.['crate-type']) ||
+            !lib['crate-type'].includes('cdylib'))
+        ) {
+          add(
+            'CONTRACT_CRATE_TYPE',
+            'error',
+            'Contract crate type missing',
+            'A Soroban WASM contract must include cdylib in lib.crate-type.',
+            'Add [lib] crate-type = ["cdylib", "rlib"].'
+          );
+        }
+        const libPath = typeof lib?.path === 'string' ? lib.path : 'src/lib.rs';
+        const relativeLib = relative(project, resolve(project, libPath));
+        if (relativeLib.startsWith('..') || isAbsolute(relativeLib)) {
+          add(
+            'LIB_PATH_OUTSIDE_PROJECT',
+            'warning',
+            'Library outside project',
+            'The configured library path leaves the inspected directory.',
+            'Inspect this library separately; Doctor does not read files outside this project.'
+          );
+        } else if (!existsSync(resolve(project, libPath))) {
+          add(
+            'CONTRACT_SOURCE_MISSING',
+            'error',
+            'Library source missing',
+            'The configured contract library source does not exist.',
+            'Create src/lib.rs or correct lib.path in Cargo.toml.'
+          );
+        }
+        if (
+          sdk &&
+          !existsSync(join(project, 'tests')) &&
+          !existsSync(join(project, 'src/test.rs')) &&
+          !existsSync(join(project, 'src/tests.rs'))
+        ) {
+          add(
+            'TEST_LAYOUT_REVIEW',
+            'info',
+            'Review contract tests',
+            'No conventional test directory or test module file found. Inline tests may still exist.',
+            'Confirm that contract behavior has tests; this check does not measure test coverage.'
+          );
+        }
+      }
+    } catch {
+      add(
+        'CARGO_TOML_READ_ERROR',
+        'error',
+        'Cannot parse Cargo.toml',
+        'Manifest is unreadable, exceeds 1 MB, or is invalid TOML.',
+        'Check file permissions, size and TOML syntax. File contents are not echoed.'
+      );
+    }
+  }
+  const summary = {
+    errors: findings.filter((f) => f.severity === 'error').length,
+    warnings: findings.filter((f) => f.severity === 'warning').length,
+    info: findings.filter((f) => f.severity === 'info').length,
+  };
   return {
     success: summary.errors === 0,
-    projectPath,
+    projectPath: project,
     findings,
     summary,
   };
-}
-
-function checkRust(findings: DiagnosticFinding[]): void {
-  try {
-    const output = execSync('rustc --version', { encoding: 'utf-8', stdio: 'pipe' });
-    findings.push({
-      code: 'RUST_OK',
-      severity: 'info',
-      title: 'Rust Installed',
-      message: `Found: ${output.trim()}`,
-    });
-  } catch {
-    findings.push({
-      code: 'RUST_MISSING',
-      severity: 'error',
-      title: 'Rust Not Found',
-      message: 'Rust compiler is not installed or not in PATH',
-      suggestion: 'Install Rust from https://rustup.rs/',
-    });
-  }
-}
-
-function checkCargo(findings: DiagnosticFinding[]): void {
-  try {
-    const output = execSync('cargo --version', { encoding: 'utf-8', stdio: 'pipe' });
-    findings.push({
-      code: 'CARGO_OK',
-      severity: 'info',
-      title: 'Cargo Installed',
-      message: `Found: ${output.trim()}`,
-    });
-  } catch {
-    findings.push({
-      code: 'CARGO_MISSING',
-      severity: 'error',
-      title: 'Cargo Not Found',
-      message: 'Cargo is not installed or not in PATH',
-      suggestion: 'Cargo is included with Rust installation',
-    });
-  }
-}
-
-function checkStellarCLI(findings: DiagnosticFinding[]): void {
-  try {
-    const output = execSync('stellar --version', { encoding: 'utf-8' });
-    findings.push({
-      code: 'STELLAR_CLI_OK',
-      severity: 'info',
-      title: 'Stellar CLI Installed',
-      message: `Found: ${output.trim()}`,
-    });
-  } catch {
-    findings.push({
-      code: 'STELLAR_CLI_MISSING',
-      severity: 'warning',
-      title: 'Stellar CLI Not Found',
-      message: 'Stellar/Soroban CLI is not installed or not in PATH',
-      suggestion: 'Install: cargo install --locked stellar-cli',
-    });
-  }
-}
-
-function checkProjectStructure(projectPath: string, findings: DiagnosticFinding[]): void {
-  // Check Cargo.toml
-  const cargoTomlPath = join(projectPath, 'Cargo.toml');
-  if (!existsSync(cargoTomlPath)) {
-    findings.push({
-      code: 'NO_CARGO_TOML',
-      severity: 'error',
-      title: 'Cargo.toml Not Found',
-      message: 'No Cargo.toml file found in project root',
-      suggestion: 'This does not appear to be a Rust/Soroban project',
-    });
-    return;
-  }
-
-  findings.push({
-    code: 'CARGO_TOML_OK',
-    severity: 'info',
-    title: 'Project Structure Valid',
-    message: 'Found Cargo.toml',
-  });
-
-  // Check Cargo.toml content for Soroban dependencies
-  try {
-    const content = readFileSync(cargoTomlPath, 'utf-8');
-    if (content.includes('soroban-sdk')) {
-      findings.push({
-        code: 'SOROBAN_PROJECT',
-        severity: 'info',
-        title: 'Soroban Project Detected',
-        message: 'Found soroban-sdk dependency',
-      });
-    } else {
-      findings.push({
-        code: 'NOT_SOROBAN',
-        severity: 'warning',
-        title: 'Not a Soroban Project',
-        message: 'No soroban-sdk dependency found in Cargo.toml',
-        suggestion: 'This appears to be a standard Rust project, not a Soroban smart contract',
-      });
-    }
-  } catch {
-    findings.push({
-      code: 'CARGO_TOML_READ_ERROR',
-      severity: 'warning',
-      title: 'Cannot Read Cargo.toml',
-      message: 'Failed to read Cargo.toml content',
-    });
-  }
-
-  // Check for src directory
-  const srcPath = join(projectPath, 'src');
-  if (!existsSync(srcPath)) {
-    findings.push({
-      code: 'NO_SRC_DIR',
-      severity: 'warning',
-      title: 'No src/ Directory',
-      message: 'Project does not have a src/ directory',
-    });
-  }
 }

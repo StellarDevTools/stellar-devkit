@@ -1,26 +1,33 @@
 {
   "name": "@stellar-devkit/diagnostics",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Diagnostic engine and rules for Stellar DevKit",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     },
     "./error-registry": {
+      "types": "./dist/error-registry.d.ts",
       "import": "./dist/error-registry.mjs",
-      "require": "./dist/error-registry.js",
-      "types": "./dist/error-registry.d.ts"
+      "require": "./dist/error-registry.js"
+    },
+    "./doctor": {
+      "types": "./dist/doctor.d.ts",
+      "import": "./dist/doctor.mjs",
+      "require": "./dist/doctor.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsup src/index.ts src/error-registry.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts src/error-registry.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts src/error-registry.ts src/doctor.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts src/error-registry.ts src/doctor.ts --format cjs,esm --dts --watch",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -28,6 +35,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@iarna/toml": "2.2.5",
     "@stellar-devkit/core": "workspace:*",
     "@stellar-devkit/stellar": "workspace:*"
   },
