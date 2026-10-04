@@ -1,3 +1,4 @@
+import type { ErrorExplanation } from '@stellar-devkit/stellar';
 /**
  * Types for Transaction Inspector
  */
@@ -33,6 +34,14 @@ export interface TransactionInfo {
   feeBump?: boolean;
   sourceAccount?: string;
   fee?: string;
+  sequence?: string;
+  resultCode?: string;
+  operationResultCodes?: string[];
+  resultMetaXdr?: string;
+  diagnosticEvents?: TransactionEvent[];
+  returnValue?: unknown;
+  diagnostic?: ErrorExplanation;
+  warnings?: string[];
   operationCount?: number;
   operations?: TransactionOperation[];
   events?: TransactionEvent[];

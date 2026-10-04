@@ -20,6 +20,8 @@ export interface ContractDetails {
   contractId: string;
   wasmInfo?: ContractWasmInfo;
   exists: boolean;
+  lastModifiedLedger?: number;
+  liveUntilLedger?: number;
 }
 
 export interface ContractInspectResult {

@@ -1,107 +1,89 @@
-/**
- * Contract Event Viewer
- *
- * Query contract events using RPC
- */
+import {
+  createRpcServer,
+  withRpcTimeout,
+  decodeScVal,
+  safeErrorContext,
+} from '@stellar-devkit/stellar';
+import { isValidContractId } from '../contract/inspector';
+import type { EventViewerOptions, EventViewerResult } from './types';
 
-import * as StellarSdk from '@stellar/stellar-sdk';
-import type {
-  EventViewerOptions,
-  EventViewerResult,
-  ContractEvent,
-} from './types';
-
-const DEFAULT_RPC_URLS = {
-  testnet: 'https://soroban-testnet.stellar.org',
-  futurenet: 'https://rpc-futurenet.stellar.org',
-};
-
-/**
- * Query contract events
- */
 export async function queryEvents(
   options: EventViewerOptions = {}
 ): Promise<EventViewerResult> {
   const network = options.network || 'testnet';
-
-  // Determine RPC URL
-  let rpcUrl: string;
-  if (options.customRpcUrl) {
-    rpcUrl = options.customRpcUrl;
-  } else if (network === 'mainnet') {
-    return {
-      success: false,
-      network: 'mainnet',
-      events: [],
-      error: 'Mainnet requires a custom RPC endpoint. Use --rpc-url <url> or set customRpcUrl option.',
-    };
-  } else if (network in DEFAULT_RPC_URLS) {
-    rpcUrl = DEFAULT_RPC_URLS[network as keyof typeof DEFAULT_RPC_URLS];
-  } else {
-    return {
-      success: false,
-      network,
-      events: [],
-      error: `No RPC URL available for network: ${network}`,
-    };
-  }
-
   try {
-    // Create RPC server instance
-    const server = new StellarSdk.rpc.Server(rpcUrl, {
-      allowHttp: rpcUrl.startsWith('http://'),
-    });
-
-    // Build event request
-    const request: any = {
-      filters: [],
-      limit: options.limit || 10,
-    };
-
-    if (options.startLedger) {
-      request.startLedger = options.startLedger;
-    }
-
-    // Add contract ID filters if provided
-    if (options.contractIds && options.contractIds.length > 0) {
-      request.filters.push({
-        type: 'contract',
-        contractIds: options.contractIds,
-      });
-    } else {
-      // Query all events if no filters provided
-      request.filters.push({
-        type: 'contract',
-      });
-    }
-
-    // Fetch events
-    const response = await server.getEvents(request);
-
-    // Parse events
-    const events: ContractEvent[] = response.events.map((event: any) => ({
-      type: event.type,
-      ledger: event.ledger,
-      contractId: event.contractId,
-      id: event.id,
-      pagingToken: event.pagingToken,
-      topics: event.topic || [],
-      value: event.value?.xdr || '',
-    }));
-
+    if (
+      options.cursor !== undefined &&
+      (!options.cursor.trim() || options.cursor.length > 1024)
+    )
+      throw new Error('Invalid event cursor.');
+    if (options.cursor !== undefined && options.startLedger !== undefined)
+      throw new Error('Use cursor or startLedger, not both.');
+    if (
+      options.startLedger !== undefined &&
+      (!Number.isSafeInteger(options.startLedger) || options.startLedger < 1)
+    )
+      throw new Error('startLedger must be a positive integer.');
+    const limit = options.limit ?? 10;
+    if (!Number.isInteger(limit) || limit < 1 || limit > 10000)
+      throw new Error('limit must be an integer between 1 and 10000.');
+    if (
+      options.contractIds &&
+      (options.contractIds.length > 5 ||
+        options.contractIds.some((id) => !isValidContractId(id)))
+    )
+      throw new Error('Provide at most five valid contract IDs.');
+    if (
+      options.eventType &&
+      !['contract', 'system', 'diagnostic'].includes(options.eventType)
+    )
+      throw new Error('Invalid event type.');
+    const server = createRpcServer(network, options.customRpcUrl);
+    // A first page needs a ledger boundary. Default to the latest closed ledger.
+    const startLedger = options.cursor
+      ? undefined
+      : (options.startLedger ??
+        (await withRpcTimeout(server.getLatestLedger())).sequence);
+    const response = await withRpcTimeout(
+      server.getEvents({
+        filters: [
+          {
+            type: options.eventType || 'contract',
+            contractIds: options.contractIds?.length
+              ? options.contractIds
+              : undefined,
+          },
+        ],
+        limit,
+        startLedger,
+        cursor: options.cursor,
+      })
+    );
     return {
       success: true,
       network,
-      events,
       latestLedger: response.latestLedger,
-      cursor: events.length > 0 && events[events.length - 1] ? events[events.length - 1]!.pagingToken : undefined,
+      cursor: response.cursor,
+      events: response.events.map((event) => ({
+        type: event.type,
+        ledger: event.ledger,
+        contractId: event.contractId?.contractId(),
+        id: event.id,
+        pagingToken: event.pagingToken,
+        topics: event.topic.map((value) => value.toXDR('base64')),
+        value: event.value.toXDR('base64'),
+        decodedTopics: event.topic.map(decodeScVal),
+        decodedValue: decodeScVal(event.value),
+      })),
     };
-  } catch (error: any) {
+  } catch (error) {
     return {
       success: false,
       network,
       events: [],
-      error: error.message || 'Failed to query events',
+      error: safeErrorContext(
+        error instanceof Error ? error.message : 'Failed to query events'
+      ),
     };
   }
 }
