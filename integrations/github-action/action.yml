@@ -16,6 +16,11 @@ inputs:
     required: false
     default: 'true'
 
+  check-tools:
+    description: 'Probe local Rust, Cargo and Stellar CLI executables (disable for manifest-only checks)'
+    required: false
+    default: 'true'
+
 outputs:
   success:
     description: 'Whether diagnostics passed'
@@ -23,6 +28,9 @@ outputs:
     description: 'Number of errors found'
   warnings:
     description: 'Number of warnings found'
+
+  report:
+    description: 'Full diagnostic result as JSON'
 
 runs:
   using: 'node20'

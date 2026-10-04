@@ -1,66 +1,32 @@
-# Stellar DevKit GitHub Action
+# Project Doctor GitHub Action
 
-Run Stellar/Soroban project diagnostics in your CI/CD pipeline.
-
-## Usage
+Run read-only local Soroban project diagnostics. The checked-in ncc bundle is required because GitHub does not build JavaScript actions for consumers.
 
 ```yaml
-name: Stellar DevKit Check
-
+name: Contract diagnostics
 on: [push, pull_request]
-
+permissions:
+  contents: read
 jobs:
-  check:
+  doctor:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
+      - uses: actions/setup-node@v4
         with:
-          toolchain: stable
-      
-      - name: Install Stellar CLI
-        run: cargo install --locked stellar-cli
-      
-      - name: Run Stellar DevKit Doctor
-        uses: stellar-devkit/stellar-devkit/integrations/github-action@main
+          node-version: '22'
+      - uses: StellarDevTools/stellar-devkit/integrations/github-action@main
+        id: doctor
         with:
-          project-path: '.'
+          project-path: ./contracts/hello
+          check-tools: 'false'
           fail-on-error: 'true'
 ```
 
-## Inputs
+Set project-path to your actual Cargo crate. Pin the Action reference to a reviewed commit SHA for reproducibility. This example checks manifest/layout only, so installing Rust or Stellar CLI is unnecessary. Enable check-tools after installing your required toolchain to test executable availability as well.
 
-- `project-path` (optional): Path to your Stellar/Soroban project. Default: `.`
-- `fail-on-error` (optional): Fail the build if errors are found. Default: `true`
+Inputs: project-path (default `.`), fail-on-error (default `true`), check-tools (default `true`). Outputs: success, errors, warnings, report (full JSON diagnostic result). Errors fail only when fail-on-error is true; warnings do not fail by themselves. Unexpected execution errors always fail the action.
 
-## Outputs
+To consume outputs, reference `${{ steps.doctor.outputs.errors }}` or parse `report` as JSON. Do not interpolate untrusted report text into a shell command.
 
-- `success`: Whether all diagnostics passed
-- `errors`: Number of errors found
-- `warnings`: Number of warnings found
-
-## What It Checks
-
-- Rust installation and version
-- Cargo installation
-- Stellar CLI availability
-- Project structure (Cargo.toml, src/)
-- Soroban dependencies
-- Common configuration issues
-
-## Example with Custom Configuration
-
-```yaml
-- name: Check Soroban Contract
-  uses: stellar-devkit/stellar-devkit/integrations/github-action@main
-  with:
-    project-path: './contracts/my-contract'
-    fail-on-error: 'false'
-  
-- name: Check results
-  run: |
-    echo "Errors: ${{ steps.check.outputs.errors }}"
-    echo "Warnings: ${{ steps.check.outputs.warnings }}"
-```
+Development: build dependencies and run `pnpm --filter @stellar-devkit/github-action build`, test, then commit regenerated dist alongside source changes. CI tests the bundled action against examples/doctor-contract. No Marketplace release is claimed.

@@ -68,3 +68,6 @@ Thumbs.db
 *.tmp
 *.temp
 .cache/
+
+# GitHub executes the checked-in Action bundle without installing dependencies.
+!integrations/github-action/dist/
