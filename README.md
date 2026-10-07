@@ -5,7 +5,13 @@ Read-only inspection and diagnostics for Stellar and Soroban developers.
 [![CI](https://github.com/StellarDevTools/stellar-devkit/actions/workflows/ci.yml/badge.svg)](https://github.com/StellarDevTools/stellar-devkit/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-[Web application](https://stellar-devkit-eta.vercel.app) ? [Contributor issues](https://github.com/StellarDevTools/stellar-devkit/issues) ? [CLI reference](docs/CLI.md)
+[Web application](https://stellar-devkit-eta.vercel.app) • [Contributor issues](https://github.com/StellarDevTools/stellar-devkit/issues) • [CLI reference](docs/CLI.md)
+
+## Why Stellar DevKit?
+
+Stellar DevKit complements Stellar Lab and stellar-cli with read-only diagnostics for local and deployed contracts. It provides Project Doctor for validating Soroban project structure, MCP integration for Claude and other AI tools, and read-only transaction simulation without signing or submitting. The web interface decodes XDR and inspects accounts/contracts without managing keys or production workflows.
+
+<!-- TODO: Add screenshot/GIF demonstrating CLI + web interface -->
 
 ## What works
 
@@ -61,7 +67,7 @@ pnpm test
 pnpm build
 ```
 
-Tests use mocks and local fixtures; normal CI does not require live Stellar networks or private keys. See the [readiness report](OPEN_SOURCE_READINESS_REPORT.md) for measured results rather than inferred coverage percentages.
+Tests use mocks and local fixtures; normal CI does not require live Stellar networks or private keys. See the [readiness report](docs/archive/OPEN_SOURCE_READINESS_REPORT.md) for measured results rather than inferred coverage percentages.
 
 ## Limits and remaining work
 
