@@ -77,7 +77,7 @@ Tests use mocks and local fixtures; normal CI does not require live Stellar netw
 - Doctor does not compile contracts, execute project tests, resolve all workspace dependency inheritance, or audit contract security.
 - Error matching is advisory; custom contract error numbers require the contract's own definitions.
 - RPC history depends on the provider's retention window. Mainnet RPC tools require `--rpc-url` (health uses `--endpoint`). Account Inspector uses Horizon.
-- Dependency audit findings remain open; see [upgrade/triage issue #14](https://github.com/StellarDevTools/stellar-devkit/issues/14).
+- Dependency audit findings remain open; see [upgrade/triage issue #14](https://github.com/StellarDevTools/stellar-devkit/issues/14) and [audit triage document](docs/DEPENDENCY_AUDIT.md).
 - There is no built-in rate limiter, broad browser E2E suite, or verified npm/Marketplace release.
 
 ## Contribute
