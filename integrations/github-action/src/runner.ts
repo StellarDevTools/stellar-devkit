@@ -7,17 +7,26 @@
 import * as core from '@actions/core';
 import { diagnoseProject } from '@stellar-devkit/diagnostics/doctor';
 
+function getStrictBooleanInput(name: string, defaultValue: boolean): boolean {
+  const value = core.getInput(name);
+  if (value === '') return defaultValue;
+  if (['true', 'True', 'TRUE'].includes(value)) return true;
+  if (['false', 'False', 'FALSE'].includes(value)) return false;
+  throw new TypeError(`Invalid ${name} input: expected true or false`);
+}
+
 export async function run(): Promise<void> {
   try {
     // Get inputs
     const projectPath = core.getInput('project-path') || '.';
-    const failOnError = core.getInput('fail-on-error') === 'true';
+    const failOnError = getStrictBooleanInput('fail-on-error', true);
+    const checkTools = getStrictBooleanInput('check-tools', true);
 
     core.info(`Running Stellar DevKit diagnostics on: ${projectPath}`);
 
     // Run diagnostics
     const result = await diagnoseProject(projectPath, {
-      checkTools: core.getInput('check-tools') !== 'false',
+      checkTools,
     });
 
     // Set outputs

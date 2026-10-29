@@ -27,6 +27,8 @@ Set project-path to your actual Cargo crate. Pin the Action reference to a revie
 
 Inputs: project-path (default `.`), fail-on-error (default `true`), check-tools (default `true`). Outputs: success, errors, warnings, report (full JSON diagnostic result). Errors fail only when fail-on-error is true; warnings do not fail by themselves. Unexpected execution errors always fail the action.
 
+Boolean inputs accept only `true`, `True`, `TRUE`, `false`, `False`, or `FALSE` (matching the Actions toolkit's YAML 1.2 boolean forms). Omitted or empty values retain the declared `true` defaults. Invalid values fail the Action before any diagnostics or tool probes run; the error identifies the input name.
+
 To consume outputs, reference `${{ steps.doctor.outputs.errors }}` or parse `report` as JSON. Do not interpolate untrusted report text into a shell command.
 
 Development: build dependencies and run `pnpm --filter @stellar-devkit/github-action build`, test, then commit regenerated dist alongside source changes. CI tests the bundled action against examples/doctor-contract. No Marketplace release is claimed.
