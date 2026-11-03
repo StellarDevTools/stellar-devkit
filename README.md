@@ -9,7 +9,24 @@ Read-only inspection and diagnostics for Stellar and Soroban developers.
 
 ## Why Stellar DevKit?
 
-Stellar DevKit complements Stellar Lab and stellar-cli with read-only diagnostics for local and deployed contracts. It provides Project Doctor for validating Soroban project structure, MCP integration for Claude and other AI tools, and read-only transaction simulation without signing or submitting. The web interface decodes XDR and inspects accounts/contracts without managing keys or production workflows.
+**Stellar DevKit is your diagnostic companion for Stellar and Soroban development.** While `stellar-cli` handles deployment and signing, and Stellar Lab provides transaction building, Stellar DevKit focuses on **inspection, debugging, and validation** — without ever touching your private keys.
+
+### Key Differentiators
+
+- **🔍 Read-Only by Design**: Never signs transactions or handles secrets. Safe to use on mainnet contracts without deployment risk.
+- **🤖 AI-Native**: MCP server integration brings Stellar diagnostics directly into Claude, Cursor, and other AI coding assistants.
+- **🏥 Project Doctor**: Validates Soroban project structure, dependencies, and toolchain before you hit build errors.
+- **🌐 Multi-Interface**: Same core logic powers CLI, web app, MCP server, and GitHub Actions — use what fits your workflow.
+- **💰 Free RPC**: Works with public testnet/futurenet endpoints out-of-the-box. No API keys required for development.
+- **📊 Event & State Inspection**: Deep-dive into contract events, storage, and simulation results that other tools don't surface.
+
+### Real-World Use Cases
+
+1. **Debugging Failed Transactions**: Paste transaction hash → see decoded operations, result codes, events, and error explanations
+2. **Pre-Deploy Validation**: Run Doctor on your Soroban project to catch misconfigurations before `stellar-cli contract deploy` 
+3. **AI-Assisted Development**: Ask Claude "What's wrong with this Soroban error?" and it queries the MCP server for context
+4. **Contract Auditing**: Inspect deployed contract WASM hash, instance TTL, and modification ledger without needing source code
+5. **CI/CD Integration**: GitHub Action runs Doctor on every PR to enforce project standards
 
 <!-- TODO: Add screenshot/GIF demonstrating CLI + web interface -->
 
@@ -24,7 +41,7 @@ Stellar DevKit complements Stellar Lab and stellar-cli with read-only diagnostic
 | RPC Health            | Health, latest ledger and bounded request time                                                           | CLI, web, MCP                 |
 | Contract Inspector    | Validated ID, WASM SHA-256/size, instance modification and TTL ledgers                                   | CLI, web, MCP                 |
 | Transaction Inspector | Status, sequence, operation/result codes, v3 events and raw metadata                                     | CLI, web, MCP                 |
-| Event Viewer          | Contract/type filters, ledger/cursor pagination and decoded ScVals                                       | CLI, MCP                      |
+| Event Viewer          | Contract/type filters, ledger/cursor pagination and decoded ScVals                                       | CLI, web, MCP                 |
 | Simulation            | Read-only invokeHostFunction simulation, fees/resources, auth, return value, events and restore preamble | CLI, MCP                      |
 
 Simulation never signs or submits transactions. An unsigned envelope still needs a valid source account and invocation. Results are estimates at the returned ledger, not a guarantee of later execution.

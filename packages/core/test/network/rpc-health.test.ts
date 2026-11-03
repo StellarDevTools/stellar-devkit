@@ -8,11 +8,14 @@ import * as StellarSdk from '@stellar/stellar-sdk';
 
 // Mock the Stellar SDK
 vi.mock('@stellar/stellar-sdk', async () => {
-  const actual = await vi.importActual('@stellar/stellar-sdk');
+  const actual = await vi.importActual<typeof import('@stellar/stellar-sdk')>('@stellar/stellar-sdk');
   return {
     ...actual,
     rpc: {
-      Server: vi.fn(),
+      Server: vi.fn().mockImplementation((url: string) => ({
+        getHealth: vi.fn(),
+        getLatestLedger: vi.fn(),
+      })),
     },
   };
 });
@@ -81,15 +84,16 @@ describe('RPC Health Checker', () => {
 
     it('should report healthy RPC with ledger info', async () => {
       // Mock successful RPC response
-      const mockServer = {
-        getHealth: vi.fn().mockResolvedValue({ status: 'healthy' }),
-        getLatestLedger: vi.fn().mockResolvedValue({
-          sequence: 12345,
-          protocolVersion: 20,
-        }),
-      };
+      const mockGetHealth = vi.fn().mockResolvedValue({ status: 'healthy' });
+      const mockGetLatestLedger = vi.fn().mockResolvedValue({
+        sequence: 12345,
+        protocolVersion: 20,
+      });
 
-      (StellarSdk.rpc.Server as any).mockImplementation(() => mockServer);
+      vi.mocked(StellarSdk.rpc.Server).mockImplementation((url: string) => ({
+        getHealth: mockGetHealth,
+        getLatestLedger: mockGetLatestLedger,
+      }) as any);
 
       const result = await checkRPCHealth({ network: 'testnet' });
 
@@ -105,12 +109,13 @@ describe('RPC Health Checker', () => {
     });
 
     it('should handle degraded RPC status', async () => {
-      const mockServer = {
-        getHealth: vi.fn().mockResolvedValue({ status: 'degraded' }),
-        getLatestLedger: vi.fn(),
-      };
+      const mockGetHealth = vi.fn().mockResolvedValue({ status: 'degraded' });
+      const mockGetLatestLedger = vi.fn();
 
-      (StellarSdk.rpc.Server as any).mockImplementation(() => mockServer);
+      vi.mocked(StellarSdk.rpc.Server).mockImplementation((url: string) => ({
+        getHealth: mockGetHealth,
+        getLatestLedger: mockGetLatestLedger,
+      }) as any);
 
       const result = await checkRPCHealth({ network: 'testnet' });
 
@@ -119,15 +124,16 @@ describe('RPC Health Checker', () => {
     });
 
     it('should fallback to getLatestLedger if getHealth fails', async () => {
-      const mockServer = {
-        getHealth: vi.fn().mockRejectedValue(new Error('Health endpoint not available')),
-        getLatestLedger: vi.fn().mockResolvedValue({
-          sequence: 12345,
-          protocolVersion: 20,
-        }),
-      };
+      const mockGetHealth = vi.fn().mockRejectedValue(new Error('Health endpoint not available'));
+      const mockGetLatestLedger = vi.fn().mockResolvedValue({
+        sequence: 12345,
+        protocolVersion: 20,
+      });
 
-      (StellarSdk.rpc.Server as any).mockImplementation(() => mockServer);
+      vi.mocked(StellarSdk.rpc.Server).mockImplementation((url: string) => ({
+        getHealth: mockGetHealth,
+        getLatestLedger: mockGetLatestLedger,
+      }) as any);
 
       const result = await checkRPCHealth({ network: 'testnet' });
 
@@ -153,14 +159,15 @@ describe('RPC Health Checker', () => {
     });
 
     it('should handle timeout', async () => {
-      const mockServer = {
-        getHealth: vi.fn().mockImplementation(
-          () => new Promise((resolve) => setTimeout(resolve, 5000))
-        ),
-        getLatestLedger: vi.fn(),
-      };
+      const mockGetHealth = vi.fn().mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 5000))
+      );
+      const mockGetLatestLedger = vi.fn();
 
-      (StellarSdk.rpc.Server as any).mockImplementation(() => mockServer);
+      vi.mocked(StellarSdk.rpc.Server).mockImplementation((url: string) => ({
+        getHealth: mockGetHealth,
+        getLatestLedger: mockGetLatestLedger,
+      }) as any);
 
       const result = await checkRPCHealth({ network: 'testnet', timeout: 100 });
 
@@ -170,15 +177,16 @@ describe('RPC Health Checker', () => {
     });
 
     it('should use custom endpoint when provided', async () => {
-      const mockServer = {
-        getHealth: vi.fn().mockResolvedValue({ status: 'healthy' }),
-        getLatestLedger: vi.fn().mockResolvedValue({
-          sequence: 99999,
-          protocolVersion: 20,
-        }),
-      };
+      const mockGetHealth = vi.fn().mockResolvedValue({ status: 'healthy' });
+      const mockGetLatestLedger = vi.fn().mockResolvedValue({
+        sequence: 99999,
+        protocolVersion: 20,
+      });
 
-      (StellarSdk.rpc.Server as any).mockImplementation(() => mockServer);
+      vi.mocked(StellarSdk.rpc.Server).mockImplementation((url: string) => ({
+        getHealth: mockGetHealth,
+        getLatestLedger: mockGetLatestLedger,
+      }) as any);
 
       const customEndpoint = 'https://custom-rpc.example.com';
       const result = await checkRPCHealth({

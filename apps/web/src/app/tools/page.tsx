@@ -53,10 +53,10 @@ export default function ToolsPage() {
     },
     {
       title: 'Event Viewer',
-      description: 'Inspect contract events',
+      description: 'View and filter Soroban contract events',
       href: '/tools/events',
-      status: 'CLI / MCP',
-      available: false,
+      status: 'Available',
+      available: true,
     },
   ];
 
