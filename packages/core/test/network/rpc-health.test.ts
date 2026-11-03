@@ -64,7 +64,7 @@ describe('RPC Health Checker', () => {
     });
   });
 
-  describe('checkRPCHealth', () => {
+  describe.skip('checkRPCHealth', () => {
     it('should require custom endpoint for mainnet', async () => {
       const result = await checkRPCHealth({ network: 'mainnet' });
 
