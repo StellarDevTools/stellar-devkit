@@ -4,7 +4,7 @@
 
 ### Added
 - **Event Viewer Web Interface**: Implemented full web UI for contract event viewing (`apps/web/src/app/tools/events/page.tsx`)
-- **7 Substantial Wave-Ready Issues**: Added high-value contributor issues (Medium-High complexity) in `docs/WAVE_ISSUES_SUBSTANTIAL.md`:
+- **7 New Contributor Issues**: Added high-value contributor issues (Medium-High complexity) in `docs/WAVE_ISSUES_SUBSTANTIAL.md`:
   - Transaction Simulation Web UI
   - Contract Specification Extraction
   - Storage Key Inspection with TTL
@@ -12,7 +12,7 @@
   - Account History Viewer
   - Real-time RPC Health Monitoring Dashboard  
   - Contract Deployment Verification Tool
-- **Stronger Value Proposition**: Enhanced README with concrete use cases and clear differentiation from stellar-cli/Stellar Lab
+- **Enhanced Documentation**: Improved README with concrete use cases and clearer positioning
 
 ### Changed
 - **Security Upgrades**: 
