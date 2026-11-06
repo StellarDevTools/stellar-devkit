@@ -12,6 +12,7 @@
     "dev": "tsup src/index.ts --format esm --dts --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:stdio": "vitest run --config vitest.stdio.config.ts",
     "lint": "eslint src/"
   },
   "dependencies": {

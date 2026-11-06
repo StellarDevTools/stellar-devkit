@@ -153,6 +153,9 @@ jobs:
       - name: Verify CLI executable
         run: node packages/cli/dist/stellar-dev.mjs --help
 
+      - name: Test packaged MCP server over stdio
+        run: pnpm --filter @stellar-devkit/mcp-server test:stdio
+
       - name: Test bundled Doctor Action
         id: doctor
         uses: ./integrations/github-action
